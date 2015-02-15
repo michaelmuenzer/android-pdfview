@@ -19,13 +19,17 @@
 package com.joanzapata.pdfview;
 
 import android.graphics.PointF;
-import com.joanzapata.pdfview.PDFView;
+
+import com.joanzapata.pdfview.listener.OnClickListener;
 import com.joanzapata.pdfview.util.DragPinchListener;
 import com.joanzapata.pdfview.util.DragPinchListener.OnDoubleTapListener;
 import com.joanzapata.pdfview.util.DragPinchListener.OnDragListener;
 import com.joanzapata.pdfview.util.DragPinchListener.OnPinchListener;
 
-import static com.joanzapata.pdfview.util.Constants.Pinch.*;
+import static com.joanzapata.pdfview.util.Constants.Pinch.MAXIMUM_ZOOM;
+import static com.joanzapata.pdfview.util.Constants.Pinch.MINIMUM_ZOOM;
+import static com.joanzapata.pdfview.util.Constants.Pinch.QUICK_MOVE_THRESHOLD_DISTANCE;
+import static com.joanzapata.pdfview.util.Constants.Pinch.QUICK_MOVE_THRESHOLD_TIME;
 
 /**
  * @author Joan Zapata
@@ -66,16 +70,16 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
     }
 
     @Override
-    public void startDrag(float x, float y) {
-        startDragTime = System.currentTimeMillis();
-        startDragX = x;
-    }
-
-    @Override
     public void onDrag(float dx, float dy) {
         if (isZooming() || isSwipeEnabled) {
             pdfView.moveRelativeTo(dx, dy);
         }
+    }
+
+    @Override
+    public void startDrag(float x, float y) {
+        startDragTime = System.currentTimeMillis();
+        startDragX = x;
     }
 
     @Override
@@ -112,6 +116,10 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
 
     public void setSwipeEnabled(boolean isSwipeEnabled) {
         this.isSwipeEnabled = isSwipeEnabled;
+    }
+
+    public void setOnClickListener(OnClickListener onClickListener) {
+        dragPinchListener.setOnClickListener(onClickListener);
     }
 
     @Override

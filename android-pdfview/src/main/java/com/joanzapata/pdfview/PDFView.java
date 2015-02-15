@@ -288,6 +288,10 @@ public class PDFView extends SurfaceView {
         this.onDrawListener = onDrawListener;
     }
 
+    private void setOnClickListener(com.joanzapata.pdfview.listener.OnClickListener onClickListener) {
+        dragPinchManager.setOnClickListener(onClickListener);
+    }
+
     public void recycle() {
 
         // Stop tasks
@@ -559,8 +563,6 @@ public class PDFView extends SurfaceView {
 
         // Prepare the loop listener
         class SpiralLoopListenerImpl implements SpiralLoopManager.SpiralLoopListener {
-            int nbItemTreated = 0;
-
             @Override
             public boolean onLoop(int row, int col) {
 
@@ -607,6 +609,7 @@ public class PDFView extends SurfaceView {
                 }
                 return true;
             }
+            int nbItemTreated = 0;
         }
 
         // Starts the loop
@@ -912,8 +915,6 @@ public class PDFView extends SurfaceView {
         return new Configurator(Uri.fromFile(file));
     }
 
-    private enum State {DEFAULT, LOADED, SHOWN}
-
     public class Configurator {
 
         private final Uri uri;
@@ -927,6 +928,8 @@ public class PDFView extends SurfaceView {
         private OnLoadCompleteListener onLoadCompleteListener;
 
         private OnPageChangeListener onPageChangeListener;
+
+        private com.joanzapata.pdfview.listener.OnClickListener onClickListener;
 
         private int defaultPage = 1;
 
@@ -961,6 +964,11 @@ public class PDFView extends SurfaceView {
             return this;
         }
 
+        public Configurator onClick(com.joanzapata.pdfview.listener.OnClickListener onClickListener) {
+            this.onClickListener = onClickListener;
+            return this;
+        }
+
         public Configurator defaultPage(int defaultPage) {
             this.defaultPage = defaultPage;
             return this;
@@ -970,6 +978,7 @@ public class PDFView extends SurfaceView {
             PDFView.this.recycle();
             PDFView.this.setOnDrawListener(onDrawListener);
             PDFView.this.setOnPageChangeListener(onPageChangeListener);
+            PDFView.this.setOnClickListener(onClickListener);
             PDFView.this.enableSwipe(enableSwipe);
             PDFView.this.setDefaultPage(defaultPage);
             PDFView.this.setUserWantsMinimap(showMinimap);
@@ -985,4 +994,6 @@ public class PDFView extends SurfaceView {
             return this;
         }
     }
+
+    private enum State {DEFAULT, LOADED, SHOWN}
 }

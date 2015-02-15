@@ -23,6 +23,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import com.joanzapata.pdfview.listener.OnClickListener;
+
 /**
  * @author Joan Zapata
  *         <p/>
@@ -53,65 +55,15 @@ public class DragPinchListener implements OnTouchListener {
     private static final float MAX_DOUBLE_CLICK_TIME = 280;
 
     private static final int POINTER1 = 0, POINTER2 = 1;
-
-    /** Implement this interface to receive Drag events */
-    public static interface OnDragListener {
-
-        /**
-         * @param dx The differential X offset
-         * @param dy The differential Y offset
-         */
-        void onDrag(float dx, float dy);
-
-        /** Called when a drag event starts */
-        void startDrag(float x, float y);
-
-        /** Called when a drag event stops */
-        void endDrag(float x, float y);
-
-    }
-
-    /** Implement this interface to receive Pinch events */
-    public static interface OnPinchListener {
-
-        /**
-         * @param dr    The differential ratio
-         * @param pivot The pivot point on which the redim occurs
-         */
-        void onPinch(float dr, PointF pivot);
-
-    }
-
-    /** Implement this interface to receive Double Tap events */
-    public interface OnDoubleTapListener {
-
-        /**
-         * Called when a double tap happens.
-         * @param x X-offset of event.
-         * @param y Y-offset of event.
-         */
-        void onDoubleTap(float x, float y);
-
-    }
-
-    enum State {NONE, ZOOM, DRAG}
-
     private State state = State.NONE;
-
     private float dragLastX, dragLastY;
-
     private float pointer2LastX, pointer2LastY;
-
     private float zoomLastDistance;
-
     private OnDragListener onDragListener;
-
     private OnPinchListener onPinchListener;
-
     private OnDoubleTapListener onDoubleTapListener;
-
+    private OnClickListener onClickListener;
     private float lastDownX, lastDownY;
-
     private long lastClickTime;
 
     @Override
@@ -156,6 +108,10 @@ public class DragPinchListener implements OnTouchListener {
                         lastClickTime = 0;
                     } else {
                         lastClickTime = System.currentTimeMillis();
+
+                        if(onClickListener != null) {
+                            onClickListener.onClick(v, event);
+                        }
                     }
                 }
                 break;
@@ -279,4 +235,49 @@ public class DragPinchListener implements OnTouchListener {
         this.onDoubleTapListener = onDoubleTapListener;
     }
 
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    /** Implement this interface to receive Drag events */
+    public static interface OnDragListener {
+
+        /**
+         * @param dx The differential X offset
+         * @param dy The differential Y offset
+         */
+        void onDrag(float dx, float dy);
+
+        /** Called when a drag event starts */
+        void startDrag(float x, float y);
+
+        /** Called when a drag event stops */
+        void endDrag(float x, float y);
+
+    }
+
+    /** Implement this interface to receive Pinch events */
+    public static interface OnPinchListener {
+
+        /**
+         * @param dr    The differential ratio
+         * @param pivot The pivot point on which the redim occurs
+         */
+        void onPinch(float dr, PointF pivot);
+
+    }
+
+    /** Implement this interface to receive Double Tap events */
+    public interface OnDoubleTapListener {
+
+        /**
+         * Called when a double tap happens.
+         * @param x X-offset of event.
+         * @param y Y-offset of event.
+         */
+        void onDoubleTap(float x, float y);
+
+    }
+
+    enum State {NONE, ZOOM, DRAG}
 }
