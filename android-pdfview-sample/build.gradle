@@ -28,6 +28,7 @@ android {
 dependencies {
     compile project(':android-pdfview')
     provided 'com.googlecode.androidannotations:androidannotations:2.7.1'
+
     compile 'com.googlecode.androidannotations:androidannotations-api:2.7.1'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 }
