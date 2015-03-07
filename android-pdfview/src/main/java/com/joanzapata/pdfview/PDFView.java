@@ -296,6 +296,7 @@ public class PDFView extends SurfaceView {
 
         // Stop tasks
         if (renderingAsyncTask != null) {
+            renderingAsyncTask.removeAllTasks();
             renderingAsyncTask.cancel(true);
         }
         if (decodingAsyncTask != null) {
