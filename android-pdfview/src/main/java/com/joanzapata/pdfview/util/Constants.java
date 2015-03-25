@@ -18,31 +18,36 @@
  */
 package com.joanzapata.pdfview.util;
 
-public interface Constants {
+public class Constants {
 
-    static final boolean DEBUG_MODE = false;
+    public static final boolean DEBUG_MODE = false;
 
     /** Size of the minimum, in percent of the component size */
-    static final float MINIMAP_MAX_SIZE = 200f;
+    public static final float MINIMAP_MAX_SIZE = 200f;
 
     /** Number of pages loaded (default 3) */
-    static final int LOADED_SIZE = 3;
+    public static final int LOADED_SIZE = 3;
 
-    /** Between 0 and 1, the thumbnails quality (default 0.2) */
-    static final float THUMBNAIL_RATIO = 1.0f;//0.2f;
+    public static final float LOW_THUMBNAIL_RATIO = 0.3f;
+    public static final float HIGH_THUMBNAIL_RATIO = 0.8f;
 
     /**
      * The size of the rendered parts (default 256)
      * Tinier : a little bit slower to have the whole page rendered but more reactive.
      * Bigger : user will have to wait longer to have the first visual results
      */
-    static final float PART_SIZE = 256;
+    public static final float PART_SIZE = 256;
 
     /** Transparency of masks around the main page (between 0 and 255, default 50) */
-    static final int MASK_ALPHA = 0;//20;
+    public static final int MASK_ALPHA = 0;//20;
 
+    public static final int LOW_GRID_SIZE = 7;
+    public static final int HIGH_GRID_SIZE = 10;
+
+    /** Between 0 and 1, the thumbnails quality (default 0.2) */
+    public static float THUMBNAIL_RATIO = 0.2f;
     /** The size of the grid of loaded images around the current point */
-    static final int GRID_SIZE = 10;//7;
+    public static int GRID_SIZE = 7;
 
     public interface Cache {
 
@@ -54,7 +59,7 @@ public interface Constants {
 
     public interface Pinch {
 
-        static final float MAXIMUM_ZOOM = 9;//10;
+        static final float MAXIMUM_ZOOM = 5;//10;
 
         static final float MINIMUM_ZOOM = 1;
 

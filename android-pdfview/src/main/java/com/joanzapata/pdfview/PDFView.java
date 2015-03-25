@@ -18,13 +18,23 @@
  */
 package com.joanzapata.pdfview;
 
+import android.app.ActivityManager;
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.SurfaceView;
+
 import com.joanzapata.pdfview.exception.FileNotFoundException;
 import com.joanzapata.pdfview.listener.OnDrawListener;
 import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
@@ -34,6 +44,7 @@ import com.joanzapata.pdfview.util.ArrayUtils;
 import com.joanzapata.pdfview.util.Constants;
 import com.joanzapata.pdfview.util.FileUtils;
 import com.joanzapata.pdfview.util.NumberUtils;
+
 import org.vudroid.core.DecodeService;
 
 import java.io.File;
@@ -184,6 +195,9 @@ public class PDFView extends SurfaceView {
     /** Construct the initial view */
     public PDFView(Context context, AttributeSet set) {
         super(context, set);
+
+        setConstantsForDifferentDevices(context);
+
         miniMapRequired = false;
         cacheManager = new CacheManager();
         animationManager = new AnimationManager(this);
@@ -207,6 +221,59 @@ public class PDFView extends SurfaceView {
         // A surface view does not call
         // onDraw() as a default but we need it.
         setWillNotDraw(false);
+    }
+
+    private static boolean isTablet(Context context) {
+        try {
+            // Compute screen size
+            DisplayMetrics dm = context.getResources().getDisplayMetrics();
+            float screenWidth  = dm.widthPixels / dm.xdpi;
+            float screenHeight = dm.heightPixels / dm.ydpi;
+            double size = Math.sqrt(Math.pow(screenWidth, 2) +
+                    Math.pow(screenHeight, 2));
+
+            // Tablet devices should have a screen size greater than 6 inches
+            return size >= 6;
+        } catch(Throwable t) {
+            Log.e(TAG, "Failed to compute screen size", t);
+            return false;
+        }
+
+    }
+
+    private void setConstantsForDifferentDevices(Context context) {
+
+        long totalMemory = getTotalMemory(context);
+        boolean isTablet = isTablet(context);
+        boolean deviceHasMuchMemory = ((totalMemory / (1024 * 1024)) >= (1.5 * 1024));
+
+        // 1945137152 Nexus 5
+        if(isTablet && deviceHasMuchMemory) {
+            //E.g. Nexus 9
+            Constants.THUMBNAIL_RATIO = Constants.HIGH_THUMBNAIL_RATIO;
+            Constants.GRID_SIZE = Constants.HIGH_GRID_SIZE;
+        } else if(deviceHasMuchMemory) {
+            // E.g. Nexus 5
+            Constants.THUMBNAIL_RATIO = Constants.HIGH_THUMBNAIL_RATIO;
+        } else {
+            Constants.THUMBNAIL_RATIO = Constants.LOW_THUMBNAIL_RATIO;
+            Constants.GRID_SIZE = Constants.LOW_GRID_SIZE;
+        }
+
+    }
+
+    private long getTotalMemory(Context context) {
+        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+
+        try {
+            ActivityManager actManager = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+            actManager.getMemoryInfo(memInfo);
+        } catch(Throwable t) {
+            Log.e(TAG, "Failed to retrieve memory", t);
+            return 0;
+        }
+
+        return memInfo.totalMem;
     }
 
     private void load(Uri uri, OnLoadCompleteListener listener) {
