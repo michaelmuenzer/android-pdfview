@@ -26,10 +26,10 @@ public class Constants {
     public static final float MINIMAP_MAX_SIZE = 200f;
 
     /** Number of pages loaded (default 3) */
-    public static final int LOADED_SIZE = 3;
+    public static int LOADED_SIZE = 3;
 
-    public static final float LOW_THUMBNAIL_RATIO = 0.3f;
-    public static final float HIGH_THUMBNAIL_RATIO = 0.8f;
+    public static final float LOW_THUMBNAIL_RATIO = 0.7f;
+    public static final float HIGH_THUMBNAIL_RATIO = 0.9f;
 
     /**
      * The size of the rendered parts (default 256)
@@ -44,24 +44,27 @@ public class Constants {
     public static final int LOW_GRID_SIZE = 7;
     public static final int HIGH_GRID_SIZE = 10;
 
+    public static final int HIGH_MAXIMUM_ZOOM = 8;
+    public static final int HIGH_LOADED_SIZE = 5;
+
     /** Between 0 and 1, the thumbnails quality (default 0.2) */
     public static float THUMBNAIL_RATIO = 0.2f;
     /** The size of the grid of loaded images around the current point */
-    public static int GRID_SIZE = 7;
+    public static int GRID_SIZE = 8;
+
+    /** Pinch zoom **/
+    public static float MAXIMUM_ZOOM = 6;//10;
+    public static float MINIMUM_ZOOM = 1;
 
     public interface Cache {
 
         /** The size of the cache (number of bitmaps kept) */
         static final int CACHE_SIZE = (int) Math.pow(GRID_SIZE, 2d);
 
-        static final int THUMBNAILS_CACHE_SIZE = 6;//4;
+        static final int THUMBNAILS_CACHE_SIZE = 8;//4;
     }
 
     public interface Pinch {
-
-        static final float MAXIMUM_ZOOM = 5;//10;
-
-        static final float MINIMUM_ZOOM = 1;
 
         /**
          * A move must be quicker than this duration and longer than

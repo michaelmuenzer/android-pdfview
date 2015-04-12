@@ -21,13 +21,12 @@ package com.joanzapata.pdfview;
 import android.graphics.PointF;
 
 import com.joanzapata.pdfview.listener.OnClickListener;
+import com.joanzapata.pdfview.util.Constants;
 import com.joanzapata.pdfview.util.DragPinchListener;
 import com.joanzapata.pdfview.util.DragPinchListener.OnDoubleTapListener;
 import com.joanzapata.pdfview.util.DragPinchListener.OnDragListener;
 import com.joanzapata.pdfview.util.DragPinchListener.OnPinchListener;
 
-import static com.joanzapata.pdfview.util.Constants.Pinch.MAXIMUM_ZOOM;
-import static com.joanzapata.pdfview.util.Constants.Pinch.MINIMUM_ZOOM;
 import static com.joanzapata.pdfview.util.Constants.Pinch.QUICK_MOVE_THRESHOLD_DISTANCE;
 import static com.joanzapata.pdfview.util.Constants.Pinch.QUICK_MOVE_THRESHOLD_TIME;
 
@@ -61,10 +60,10 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
     @Override
     public void onPinch(float dr, PointF pivot) {
         float wantedZoom = pdfView.getZoom() * dr;
-        if (wantedZoom < MINIMUM_ZOOM) {
-            dr = MINIMUM_ZOOM / pdfView.getZoom();
-        } else if (wantedZoom > MAXIMUM_ZOOM) {
-            dr = MAXIMUM_ZOOM / pdfView.getZoom();
+        if (wantedZoom < Constants.MINIMUM_ZOOM) {
+            dr = Constants.MINIMUM_ZOOM / pdfView.getZoom();
+        } else if (wantedZoom > Constants.MAXIMUM_ZOOM) {
+            dr = Constants.MAXIMUM_ZOOM / pdfView.getZoom();
         }
         pdfView.zoomCenteredRelativeTo(dr, pivot);
     }

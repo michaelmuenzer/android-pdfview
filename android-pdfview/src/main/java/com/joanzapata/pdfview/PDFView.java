@@ -252,9 +252,12 @@ public class PDFView extends SurfaceView {
             //E.g. Nexus 9
             Constants.THUMBNAIL_RATIO = Constants.HIGH_THUMBNAIL_RATIO;
             Constants.GRID_SIZE = Constants.HIGH_GRID_SIZE;
+            Constants.MAXIMUM_ZOOM = Constants.HIGH_MAXIMUM_ZOOM;
+            Constants.LOADED_SIZE = Constants.HIGH_LOADED_SIZE;
         } else if(deviceHasMuchMemory) {
             // E.g. Nexus 5
             Constants.THUMBNAIL_RATIO = Constants.HIGH_THUMBNAIL_RATIO;
+            Constants.LOADED_SIZE = Constants.HIGH_LOADED_SIZE;
         } else {
             Constants.THUMBNAIL_RATIO = Constants.LOW_THUMBNAIL_RATIO;
             Constants.GRID_SIZE = Constants.LOW_GRID_SIZE;
