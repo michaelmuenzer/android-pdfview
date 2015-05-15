@@ -839,7 +839,7 @@ public class PDFView extends SurfaceView {
     public void moveTo(float offsetX, float offsetY) {
 
         // Check Y offset
-        if (toCurrentScale(optimalPageHeight) < getHeight()) {
+        if (isViewHeightGreaterThanScaledPage()) {
             offsetY = getHeight() / 2 - toCurrentScale(optimalPageHeight) / 2;
         } else {
             if (offsetY > 0) {
@@ -878,6 +878,10 @@ public class PDFView extends SurfaceView {
         currentYOffset = offsetY;
         calculateMinimapAreaBounds();
         invalidate();
+    }
+
+    public boolean isViewHeightGreaterThanScaledPage() {
+        return toCurrentScale(optimalPageHeight) < getHeight();
     }
 
     /**
@@ -928,6 +932,10 @@ public class PDFView extends SurfaceView {
 
     public float getCurrentYOffset() {
         return currentYOffset;
+    }
+
+    public float toRealScale(double size) {
+        return toRealScale((float) size);
     }
 
     public float toRealScale(float size) {
