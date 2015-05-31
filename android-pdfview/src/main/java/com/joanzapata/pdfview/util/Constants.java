@@ -29,6 +29,7 @@ public class Constants {
     public static int LOADED_SIZE = 3;
 
     public static final float LOW_THUMBNAIL_RATIO = 0.7f;
+    public static final float MEDIUM_THUMBNAIL_RATIO = 0.8f;
     public static final float HIGH_THUMBNAIL_RATIO = 0.9f;
 
     /**
@@ -41,19 +42,20 @@ public class Constants {
     /** Transparency of masks around the main page (between 0 and 255, default 50) */
     public static final int MASK_ALPHA = 0;//20;
 
-    public static final int LOW_GRID_SIZE = 7;
+    public static final int LOW_GRID_SIZE = 5;
+    public static final int MEDIUM_GRID_SIZE = 7;
     public static final int HIGH_GRID_SIZE = 10;
 
-    public static final int HIGH_MAXIMUM_ZOOM = 8;
+    public static final int HIGH_MAXIMUM_ZOOM = 7;
     public static final int HIGH_LOADED_SIZE = 5;
 
     /** Between 0 and 1, the thumbnails quality (default 0.2) */
     public static float THUMBNAIL_RATIO = 0.2f;
     /** The size of the grid of loaded images around the current point */
-    public static int GRID_SIZE = 8;
+    public static int GRID_SIZE = MEDIUM_GRID_SIZE;
 
     /** Pinch zoom **/
-    public static float MAXIMUM_ZOOM = 6;//10;
+    public static float MAXIMUM_ZOOM = 5;//10;
     public static float MINIMUM_ZOOM = 1;
 
     public interface Cache {

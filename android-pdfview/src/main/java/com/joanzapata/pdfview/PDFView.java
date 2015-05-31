@@ -257,20 +257,26 @@ public class PDFView extends SurfaceView {
 
         long totalMemory = getTotalMemory(context);
         boolean isTablet = isTablet(context);
-        boolean deviceHasMuchMemory = ((totalMemory / (1024 * 1024)) >= (1.5 * 1024));
+        boolean deviceHasMuchMemory = ((totalMemory / (1024 * 1024)) >= (1.8 * 1024));
 
         // 1945137152 Nexus 5
-        if(isTablet && deviceHasMuchMemory) {
+        if(isTablet && deviceHasMuchMemory) {   // High-end tablet
             //E.g. Nexus 9
             Constants.THUMBNAIL_RATIO = Constants.HIGH_THUMBNAIL_RATIO;
             Constants.GRID_SIZE = Constants.HIGH_GRID_SIZE;
+
             Constants.MAXIMUM_ZOOM = Constants.HIGH_MAXIMUM_ZOOM;
             Constants.LOADED_SIZE = Constants.HIGH_LOADED_SIZE;
-        } else if(deviceHasMuchMemory) {
+        } else if(!isTablet && deviceHasMuchMemory) {        // High-end phone
             // E.g. Nexus 5
             Constants.THUMBNAIL_RATIO = Constants.HIGH_THUMBNAIL_RATIO;
+            Constants.GRID_SIZE = Constants.MEDIUM_GRID_SIZE;
+
             Constants.LOADED_SIZE = Constants.HIGH_LOADED_SIZE;
-        } else {
+        } else if(isTablet){                    // Tablet
+            Constants.THUMBNAIL_RATIO = Constants.MEDIUM_THUMBNAIL_RATIO;
+            Constants.GRID_SIZE = Constants.LOW_GRID_SIZE;
+        } else {                                // Phone
             Constants.THUMBNAIL_RATIO = Constants.LOW_THUMBNAIL_RATIO;
             Constants.GRID_SIZE = Constants.LOW_GRID_SIZE;
         }
