@@ -26,6 +26,7 @@ import android.graphics.PointF;
 import android.view.animation.DecelerateInterpolator;
 
 import com.joanzapata.pdfview.PDFView;
+import com.joanzapata.pdfview.listener.OnPageChangedAnimatorListener;
 
 /**
  * @author Joan Zapata
@@ -42,6 +43,8 @@ class AnimationManager {
 
     private ValueAnimator animation;
 
+    private OnPageChangedAnimatorListener animationListener;
+
     public AnimationManager(PDFView pdfView) {
         this.pdfView = pdfView;
     }
@@ -52,7 +55,11 @@ class AnimationManager {
         }
         animation = ValueAnimator.ofFloat(xFrom, xTo);
         animation.setInterpolator(new DecelerateInterpolator());
-        animation.addUpdateListener(new XAnimation());
+
+        XAnimation xAnimation = new XAnimation(this.pdfView.getCurrentPage());
+        animation.addUpdateListener(xAnimation);
+        animation.addListener(xAnimation);
+
         animation.setDuration(400);
         animation.start();
     }
@@ -77,7 +84,16 @@ class AnimationManager {
         }
     }
 
-    class XAnimation implements AnimatorUpdateListener {
+    public void setOnPageChangedAnimationListener(OnPageChangedAnimatorListener onPageChangedAnimationListener) {
+        animationListener = onPageChangedAnimationListener;
+    }
+
+    class XAnimation implements AnimatorUpdateListener, AnimatorListener {
+        private int fromPage = -1;
+
+        public XAnimation(int animationFromPage) {
+            fromPage = animationFromPage;
+        }
 
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
@@ -85,6 +101,33 @@ class AnimationManager {
             pdfView.moveTo(offset, pdfView.getCurrentYOffset());
         }
 
+        @Override
+        public void onAnimationStart(Animator animation) {
+            if(animationListener != null) {
+                animationListener.onAnimationStart(animation, fromPage);
+            }
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            if(animationListener != null) {
+                animationListener.onAnimationEnd(animation, fromPage);
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+            if(animationListener != null) {
+                animationListener.onAnimationCancel(animation, fromPage);
+            }
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+            if(animationListener != null) {
+                animationListener.onAnimationRepeat(animation, fromPage);
+            }
+        }
     }
 
     class ZoomAnimation implements AnimatorUpdateListener, AnimatorListener {

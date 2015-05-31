@@ -40,6 +40,8 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
     private PDFView pdfView;
 
     private DragPinchListener dragPinchListener;
+    private OnPinchListener onPinchListener;
+    private OnDragListener onDragListener;
 
     private long startDragTime;
 
@@ -66,6 +68,10 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
             dr = Constants.MAXIMUM_ZOOM / pdfView.getZoom();
         }
         pdfView.zoomCenteredRelativeTo(dr, pivot);
+
+        if(onPinchListener != null) {
+            onPinchListener.onPinch(dr, pivot);
+        }
     }
 
     @Override
@@ -73,12 +79,20 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
         if (isZooming() || isSwipeEnabled) {
             pdfView.moveRelativeTo(dx, dy);
         }
+
+        if(onDragListener != null) {
+            onDragListener.onDrag(dx, dy);
+        }
     }
 
     @Override
     public void startDrag(float x, float y) {
         startDragTime = System.currentTimeMillis();
         startDragX = x;
+
+        if(onDragListener != null) {
+            onDragListener.startDrag(x, y);
+        }
     }
 
     @Override
@@ -97,6 +111,10 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
             }
         } else {
             pdfView.loadPages();
+        }
+
+        if(onDragListener != null) {
+            onDragListener.endDrag(x, y);
         }
     }
 
@@ -128,4 +146,11 @@ class DragPinchManager implements OnDragListener, OnPinchListener, OnDoubleTapLi
         }
     }
 
+    public void setOnPinchListener(OnPinchListener onPinchListener) {
+        this.onPinchListener = onPinchListener;
+    }
+
+    public void setOnDragListener(OnDragListener onDragListener) {
+        this.onDragListener = onDragListener;
+    }
 }

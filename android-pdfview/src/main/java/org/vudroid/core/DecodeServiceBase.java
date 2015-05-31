@@ -172,7 +172,13 @@ public class DecodeServiceBase implements DecodeService
     {
         if (!pages.containsKey(pageIndex) || pages.get(pageIndex).get() == null)
         {
-            pages.put(pageIndex, new SoftReference<CodecPage>(document.getPage(pageIndex)));
+            CodecPage codecPage = document.getPage(pageIndex);
+            if(codecPage == null) {
+                codecPage = document.getPage(1);
+            }
+            SoftReference<CodecPage> codecPageReference = new SoftReference<CodecPage>(codecPage);
+
+            pages.put(pageIndex, codecPageReference);
             pageEvictionQueue.remove(pageIndex);
             pageEvictionQueue.offer(pageIndex);
             if (pageEvictionQueue.size() > PAGE_POOL_SIZE) {

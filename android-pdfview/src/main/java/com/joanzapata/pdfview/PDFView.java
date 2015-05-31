@@ -18,11 +18,13 @@
  */
 package com.joanzapata.pdfview;
 
+import android.animation.Animator;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.animation.Animator.AnimatorListener;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
@@ -34,14 +36,18 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.animation.Animation;
 
 import com.joanzapata.pdfview.exception.FileNotFoundException;
 import com.joanzapata.pdfview.listener.OnDrawListener;
 import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
 import com.joanzapata.pdfview.listener.OnPageChangeListener;
+import com.joanzapata.pdfview.listener.OnPageChangedAnimatorListener;
+import com.joanzapata.pdfview.listener.OnPageLoadedListener;
 import com.joanzapata.pdfview.model.PagePart;
 import com.joanzapata.pdfview.util.ArrayUtils;
 import com.joanzapata.pdfview.util.Constants;
+import com.joanzapata.pdfview.util.DragPinchListener;
 import com.joanzapata.pdfview.util.FileUtils;
 import com.joanzapata.pdfview.util.NumberUtils;
 
@@ -161,6 +167,12 @@ public class PDFView extends SurfaceView {
 
     /** Call back object to call when the page has changed */
     private OnPageChangeListener onPageChangeListener;
+
+    /** Call back object to call when the page has loaded */
+    private OnPageLoadedListener onPageLoadedListener;
+
+    /** Call back object to call for animation when page is changed */
+    private OnPageChangedAnimatorListener onPageChangedAnimationListener;
 
     /** Call back object to call when the above layer is to drawn */
     private OnDrawListener onDrawListener;
@@ -354,12 +366,29 @@ public class PDFView extends SurfaceView {
         this.onPageChangeListener = onPageChangeListener;
     }
 
+    private void setOnPageLoadedListener(OnPageLoadedListener onPageLoadedListener) {
+        this.onPageLoadedListener = onPageLoadedListener;
+    }
+
+    private void setOnPageChangedAnimationListener(OnPageChangedAnimatorListener onPageChangedAnimationListener) {
+        this.onPageChangedAnimationListener = onPageChangedAnimationListener;
+        animationManager.setOnPageChangedAnimationListener(this.onPageChangedAnimationListener);
+    }
+
     private void setOnDrawListener(OnDrawListener onDrawListener) {
         this.onDrawListener = onDrawListener;
     }
 
     private void setOnClickListener(com.joanzapata.pdfview.listener.OnClickListener onClickListener) {
         dragPinchManager.setOnClickListener(onClickListener);
+    }
+
+    private void setOnPinchListener(DragPinchListener.OnPinchListener onPinchListener) {
+        dragPinchManager.setOnPinchListener(onPinchListener);
+    }
+
+    private void setOnDragListener(DragPinchListener.OnDragListener onDragListener) {
+        dragPinchManager.setOnDragListener(onDragListener);
     }
 
     public void recycle() {
@@ -675,6 +704,10 @@ public class PDFView extends SurfaceView {
 
                 nbItemTreated++;
                 if (nbItemTreated >= nbOfPartsLoadable) {
+                    if (onPageLoadedListener != null) {
+                        onPageLoadedListener.onPageLoaded(currentPage + 1, getPageCount());
+                    }
+
                     // Return false to stop the loop
                     return false;
                 }
@@ -720,6 +753,7 @@ public class PDFView extends SurfaceView {
         } else {
             cacheManager.cachePart(part);
         }
+
         invalidate();
     }
 
@@ -1012,6 +1046,14 @@ public class PDFView extends SurfaceView {
 
         private OnPageChangeListener onPageChangeListener;
 
+        private OnPageLoadedListener onPageLoadedListener;
+
+        private OnPageChangedAnimatorListener onPageChangedAnimationListener;
+
+        private DragPinchListener.OnPinchListener onPinchListener;
+
+        private DragPinchListener.OnDragListener onDragListener;
+
         private com.joanzapata.pdfview.listener.OnClickListener onClickListener;
 
         private int defaultPage = 1;
@@ -1047,8 +1089,28 @@ public class PDFView extends SurfaceView {
             return this;
         }
 
+        public Configurator onPageLoaded(OnPageLoadedListener onPageLoadedListener) {
+            this.onPageLoadedListener = onPageLoadedListener;
+            return this;
+        }
+
+        public Configurator onPageChangedAnimation(OnPageChangedAnimatorListener onPageChangedAnimationListener) {
+            this.onPageChangedAnimationListener = onPageChangedAnimationListener;
+            return this;
+        }
+
         public Configurator onClick(com.joanzapata.pdfview.listener.OnClickListener onClickListener) {
             this.onClickListener = onClickListener;
+            return this;
+        }
+
+        public Configurator onPinch(DragPinchListener.OnPinchListener onPinchListener) {
+            this.onPinchListener = onPinchListener;
+            return this;
+        }
+
+        public Configurator onDrag(DragPinchListener.OnDragListener onDragListener) {
+            this.onDragListener = onDragListener;
             return this;
         }
 
@@ -1061,7 +1123,11 @@ public class PDFView extends SurfaceView {
             PDFView.this.recycle();
             PDFView.this.setOnDrawListener(onDrawListener);
             PDFView.this.setOnPageChangeListener(onPageChangeListener);
+            PDFView.this.setOnPageLoadedListener(onPageLoadedListener);
             PDFView.this.setOnClickListener(onClickListener);
+            PDFView.this.setOnPinchListener(onPinchListener);
+            PDFView.this.setOnDragListener(onDragListener);
+            PDFView.this.setOnPageChangedAnimationListener(onPageChangedAnimationListener);
             PDFView.this.enableSwipe(enableSwipe);
             PDFView.this.setDefaultPage(defaultPage);
             PDFView.this.setUserWantsMinimap(showMinimap);
